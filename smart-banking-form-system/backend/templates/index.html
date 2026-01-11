@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Banking Form System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+
+        <h2 class="text-center mb-4">Smart Banking Form Reader</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <!-- Language Selection -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Select Language</label>
+                <select name="language" class="form-select">
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                    <option value="te">Telugu</option>
+                </select>
+            </div>
+
+            <hr>
+
+            <!-- Upload Image -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Upload Form Image</label>
+                <input type="file" name="image" class="form-control">
+            </div>
+
+            <hr>
+
+            <!-- Camera Capture -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Capture Using Camera</label>
+
+                <video id="video" width="100%" autoplay class="border rounded mb-2"></video>
+
+                <button type="button" onclick="capture()" class="btn btn-secondary w-100">
+                    Capture Photo
+                </button>
+
+                <canvas id="canvas" style="display:none;"></canvas>
+                <input type="file" id="cameraInput" name="camera_image" hidden>
+            </div>
+
+            <hr>
+
+            <!-- Inbuilt Forms -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Select Inbuilt Form</label>
+                <select name="inbuilt_form" class="form-select">
+                    <option value="">-- Select a form --</option>
+                    {% for f in inbuilt_forms %}
+                        <option value="{{ f }}">{{ f }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <hr>
+
+            <button class="btn btn-primary w-100">
+                Read Form Aloud
+            </button>
+
+        </form>
+
+        {% if text %}
+        <div class="alert alert-success mt-4">
+            <b>OCR Extracted Text (for demo/debug):</b><br>
+            <pre>{{ text }}</pre>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<script>
+    // Start camera
+    const video = document.getElementById("video");
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(err => {
+            console.log("Camera access denied:", err);
+        });
+
+    function capture() {
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        ctx.drawImage(video, 0, 0);
+
+        canvas.toBlob(blob => {
+            const file = new File([blob], "camera.jpg", { type: "image/jpeg" });
+            const input = document.getElementById("cameraInput");
+
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            input.files = dt.files;
+
+            alert("Photo captured. Now click 'Read Form Aloud'");
+        });
+    }
+</script>
+
+</body>
+</html>

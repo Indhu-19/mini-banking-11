@@ -1,0 +1,15 @@
+# Ignore virtual environments
+backend/venv/
+backend/venv311/
+
+# Ignore uploaded images
+backend/uploads/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore system files
+.DS_Store
+Thumbs.db
